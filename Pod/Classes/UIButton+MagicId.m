@@ -49,7 +49,7 @@
             CGPoint point = [[self superview] convertPoint:self.frame.origin toView:window];
             title = NSStringFromCGPoint(point);
         }
-        title = [title stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+        title = [title stringByReplacingOccurrencesOfString:@" " withString:@""];
         
         if (!self.accessibilityIdentifier)
         {
