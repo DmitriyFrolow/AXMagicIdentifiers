@@ -24,32 +24,31 @@
 
 #pragma mark - Add Associated Objects
 
-- (void)ax_setIdsCountDictionary:(NSDictionary *)ax_idsCountDictionary {
-    
+- (void)ax_setIdsCountDictionary:(NSDictionary *)ax_idsCountDictionary
+{
     objc_setAssociatedObject(self, @selector(ax_idsCountDictionary), ax_idsCountDictionary, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-- (NSDictionary *)ax_idsCountDictionary {
-    
+- (NSDictionary *)ax_idsCountDictionary
+{
     return objc_getAssociatedObject(self, @selector(ax_idsCountDictionary));
 }
 
 @end
 
-
-
 @implementation UIViewController (MagicId)
+
 
 #pragma mark - Public Utils
 
-- (void)ax_printAccessibilityIdentifiers {
-    
+- (void)ax_printAccessibilityIdentifiers
+{
     NSLog(@"accID: %@",self.view.accessibilityIdentifier);
     [self ax_printAccessibilityIdentifiersInView:self.view];
 }
 
-- (NSString *)ax_accessibilityIdentifierTagForInstanceOfClass:(Class)class {
-    
+- (NSString *)ax_accessibilityIdentifierTagForInstanceOfClass:(Class)class
+{
     NSString *key = NSStringFromClass(class);
     NSMutableDictionary *dic =
     [NSMutableDictionary dictionaryWithDictionary:self.ax_idsCountDictionary];
@@ -61,28 +60,38 @@
     return count.stringValue;
 }
 
-- (void)ax_addAccId {
-    
-    if(!self.view.accessibilityIdentifier) {
+- (void)ax_addAccId
+{
+    if (!self.view.accessibilityIdentifier)
+    {
         NSString *viewId = [@"" stringByAppendingFormat:@"%@_VIEW",self.view.ax_prefix];
         self.view.accessibilityIdentifier = viewId;
+    }
+    if (!self.view.accessibilityLabel)
+    {
+        NSString *viewId = [@"" stringByAppendingFormat:@"%@_VIEW",self.view.ax_prefix];
+        self.view.accessibilityLabel = viewId;
     }
     
     [self.view ax_addAccId];
 }
 
+
 #pragma mark - Private Utils
 
-- (void)ax_printAccessibilityIdentifiersInView:(UIView *)view {
-    
-    for (id obj in view.subviews) {
-        
-        if ([obj respondsToSelector:@selector(accessibilityIdentifier)]) {
+- (void)ax_printAccessibilityIdentifiersInView:(UIView *)view
+{
+    for (id obj in view.subviews)
+    {
+        if ([obj respondsToSelector:@selector(accessibilityIdentifier)])
+        {
             NSLog(@"accID: %@",[obj performSelector:@selector(accessibilityIdentifier)]);
         }
         
         if([obj isKindOfClass:UIView.class])
+        {
             [self ax_printAccessibilityIdentifiersInView:obj];
+        }
     }
 }
 

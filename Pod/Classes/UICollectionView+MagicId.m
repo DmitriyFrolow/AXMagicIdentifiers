@@ -27,19 +27,22 @@
 
 #pragma mark - Add Associated Objects
 
-- (void)ax_setRealDataSource:(id<UICollectionViewDataSource>)realDataSource {
+- (void)ax_setRealDataSource:(id<UICollectionViewDataSource>)realDataSource
+{
     
     objc_setAssociatedObject(self, @selector(ax_realDataSource), realDataSource, OBJC_ASSOCIATION_ASSIGN);
 }
 
-- (id <UICollectionViewDataSource> )ax_realDataSource {
+- (id <UICollectionViewDataSource> )ax_realDataSource
+{
     
     return objc_getAssociatedObject(self, @selector(ax_realDataSource));
 }
 
 #pragma mark - UICollectionViewDataSource
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
     
     __weak typeof(self) weakSelf = self;
     
@@ -47,8 +50,13 @@
     dispatch_once(&onceToken, ^{
         
         __strong typeof(self) self = weakSelf;
-        
-        if(!self.accessibilityIdentifier) {
+        if(!self.accessibilityIdentifier)
+        {
+            NSString *viewId = [@"" stringByAppendingFormat:@"%@_VIEW",self.ax_prefix];
+            self.accessibilityIdentifier = viewId;
+        }
+        if (!self.accessibilityLabel)
+        {
             NSString *viewId = [@"" stringByAppendingFormat:@"%@_VIEW",self.ax_prefix];
             self.accessibilityIdentifier = viewId;
         }
@@ -56,10 +64,18 @@
     
     UICollectionViewCell *cell = [self.ax_realDataSource collectionView:collectionView cellForItemAtIndexPath:indexPath];
     
-    if(!cell.contentView.accessibilityIdentifier) {
-        cell.contentView.accessibilityIdentifier =
-        [self.ax_prefix stringByAppendingFormat:@"_CELL_S%ldI%ld",(long)indexPath.section,(long)indexPath.item];
+    
+     NSString* identifier = [self.ax_prefix stringByAppendingFormat:@"_CELL_S%ldI%ld",(long)indexPath.section,(long)indexPath.item];
+    
+    if(!cell.contentView.accessibilityIdentifier)
+    {
+        cell.contentView.accessibilityIdentifier = identifier;
     }
+    if (!cell.contentView.accessibilityLabel)
+    {
+        cell.contentView.accessibilityLabel = identifier;
+    }
+    
     [cell.contentView ax_addAccId];
     
     return cell;
@@ -67,25 +83,30 @@
 
 #pragma mark - DataSource Message Forwarding
 
-- (BOOL)respondsToSelector:(SEL)aSelector {
-    
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
     return [super respondsToSelector:aSelector] || [self.ax_realDataSource respondsToSelector:aSelector];
 }
 
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
-    
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
     return [super methodSignatureForSelector:aSelector] ?:
     [(id)self.ax_realDataSource methodSignatureForSelector:aSelector];
 }
 
-- (void)forwardInvocation:(NSInvocation *)anInvocation {
-    
+- (void)forwardInvocation:(NSInvocation *)anInvocation
+{
     id dataSource = self.ax_realDataSource;
     if ([dataSource respondsToSelector:anInvocation.selector]) {
         
         [anInvocation invokeWithTarget:dataSource];
     }
-    else [super forwardInvocation:anInvocation];
+    else
+    {
+        [super forwardInvocation:anInvocation];
+    }
+        
+    
 }
 
 @end

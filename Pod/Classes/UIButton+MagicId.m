@@ -12,7 +12,8 @@
 
 @implementation UIButton (MagicId)
 
-+ (void)load {
++ (void)load
+{
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -24,21 +25,38 @@
     });
 }
 
+
 #pragma mark - Method Swizzling
 
-- (void)ax_setTitle:(NSString *)title forState:(UIControlState)state {
-
+- (void)ax_setTitle:(NSString *)title forState:(UIControlState)state
+{
     [self ax_setTitle:title forState:state];
     [self performSelector:@selector(ax_addAccId) withObject:nil afterDelay:0.5];
 }
 
+
 #pragma mark - Public Utils
 
-- (void)ax_addAccId {
+- (void)ax_addAccId
+{
     
     if (!self.accessibilityIdentifier.length || [self.accessibilityIdentifier hasPrefix:@"AX_"]) {
         NSString *title = self.titleLabel.text;
         title = [title stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+        
+        if (!title || title.length == 0)
+        {
+            UIImage* image = [self.imageView image];
+            if (image)
+            {
+                title = [self.imageView image].accessibilityIdentifier;
+            }
+            else
+            {
+                title = @"";
+            }
+            
+        }
         self.accessibilityIdentifier =
         [@"" stringByAppendingFormat:@"%@_BUTTON_%@",self.ax_prefix,title];
     }

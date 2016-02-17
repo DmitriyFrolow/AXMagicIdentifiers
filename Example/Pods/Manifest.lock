@@ -13,7 +13,7 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   AXMagicIdentifiers:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
   AXMagicIdentifiers: 44b633f1ba9ca64632e57071b008c07dfd20c047
@@ -21,4 +21,4 @@ SPEC CHECKSUMS:
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
   Kiwi: f038a6c61f7a9e4d7766bff5717aa3b3fdb75f55
 
-COCOAPODS: 0.37.2
+COCOAPODS: 0.39.0

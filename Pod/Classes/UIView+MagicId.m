@@ -12,8 +12,8 @@
 
 @implementation UIView (MagicId)
 
-+ (void)load {
-    
++ (void)load
+{
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         
@@ -26,8 +26,8 @@
 
 #pragma mark - Method Swizzle
 
-- (void)ax_addSubview:(UIView *)view {
-    
+- (void)ax_addSubview:(UIView *)view
+{
     [self ax_addSubview:view];
     
     if ([view respondsToSelector:@selector(ax_addAccId)])
@@ -36,15 +36,15 @@
 
 #pragma mark - Public Utils
 
-- (NSString *)ax_accessibilityIdentifierTag {
-
+- (NSString *)ax_accessibilityIdentifierTag
+{
     UIViewController *vc = [self ax_ViewController];
     if(![vc isKindOfClass:UIViewController.class]) return @"1";
     return [vc ax_accessibilityIdentifierTagForInstanceOfClass:self.class];
 }
 
-- (id)ax_ViewController {
-    
+- (id)ax_ViewController
+{
     id obj = self.nextResponder;
     while([obj isKindOfClass:UIView.class] &&
           ![obj isKindOfClass:UITableViewCell.class] &&
@@ -54,19 +54,20 @@
     return obj;
 }
 
-- (NSString *)ax_prefix {
-    
+- (NSString *)ax_prefix
+{
     UIViewController *vc = [self ax_ViewController];
     NSString *vcClass = NSStringFromClass(vc.class);
     if (!vcClass) vcClass = @"";
     return [@"AX_" stringByAppendingString:vcClass];
 }
 
-- (void)ax_addAccId {
-    
-    for (id obj in self.subviews) {
-        
-        if ([obj respondsToSelector:@selector(ax_addAccId)]) {
+- (void)ax_addAccId
+{
+    for (id obj in self.subviews)
+    {
+        if ([obj respondsToSelector:@selector(ax_addAccId)])
+        {
             [obj performSelector:@selector(ax_addAccId)];
         }
     }

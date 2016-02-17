@@ -16,12 +16,23 @@ static NSNumber *idsCounter = 0;
 
 #pragma mark - Public Utils
 
-- (void)ax_addAccId {
-    
-    if (self.accessibilityIdentifier) return;
-    NSString *tag = [self ax_accessibilityIdentifierTag];
-    self.accessibilityIdentifier =
-    [@"" stringByAppendingFormat:@"%@_PVIEW_%@",self.ax_prefix,tag];
+- (void)ax_addAccId
+{
+    if (!self.accessibilityIdentifier || !self.accessibilityLabel)
+    {
+        NSString *tag = [self ax_accessibilityIdentifierTag];
+     
+        if (!self.accessibilityIdentifier)
+        {
+            self.accessibilityIdentifier =
+            [@"" stringByAppendingFormat:@"%@_PVIEW_%@",self.ax_prefix,tag];
+        }
+        if (!self.accessibilityLabel)
+        {
+            self.accessibilityLabel =
+            [@"" stringByAppendingFormat:@"%@_PVIEW_%@",self.ax_prefix,tag];
+        }
+    }
 }
 
 @end

@@ -27,20 +27,20 @@
 
 #pragma mark - Add Associated Objects
 
-- (void)ax_setRealDataSource:(id<UITableViewDataSource>)realDataSource {
-    
+- (void)ax_setRealDataSource:(id<UITableViewDataSource>)realDataSource
+{
     objc_setAssociatedObject(self, @selector(ax_realDataSource), realDataSource, OBJC_ASSOCIATION_ASSIGN);
 }
 
-- (id <UITableViewDataSource> )ax_realDataSource {
-    
+- (id <UITableViewDataSource> )ax_realDataSource
+{
     return objc_getAssociatedObject(self, @selector(ax_realDataSource));
 }
 
 #pragma mark - UITableViewDataSource
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     __weak typeof(self) weakSelf = self;
     
     static dispatch_once_t onceToken;
@@ -48,18 +48,32 @@
         
         __strong typeof(self) self = weakSelf;
         
-        if(!self.accessibilityIdentifier) {
+        if(!self.accessibilityIdentifier)
+        {
             NSString *viewId = [@"" stringByAppendingFormat:@"%@_VIEW",self.ax_prefix];
             self.accessibilityIdentifier = viewId;
+        }
+        
+        if (!self.accessibilityLabel)
+        {
+            NSString *viewId = [@"" stringByAppendingFormat:@"%@_VIEW",self.ax_prefix];
+            self.accessibilityLabel = viewId;
         }
     });
     
     UITableViewCell *cell = [self.ax_realDataSource tableView:tableView cellForRowAtIndexPath:indexPath];
     
-    if(!cell.contentView.accessibilityIdentifier) {
+    if(!cell.contentView.accessibilityIdentifier)
+    {
         cell.contentView.accessibilityIdentifier =
         [self.ax_prefix stringByAppendingFormat:@"_CELL_S%ldR%ld",(long)indexPath.section,(long)indexPath.row];
     }
+    if (!cell.contentView.accessibilityLabel)
+    {
+        cell.contentView.accessibilityLabel =
+        [self.ax_prefix stringByAppendingFormat:@"_CELL_S%ldR%ld",(long)indexPath.section,(long)indexPath.row];
+    }
+    
     [cell.contentView ax_addAccId];
     
     return cell;
@@ -67,25 +81,28 @@
 
 #pragma mark - DataSource Message Forwarding
 
-- (BOOL)respondsToSelector:(SEL)aSelector {
-    
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
     return [super respondsToSelector:aSelector] || [self.ax_realDataSource respondsToSelector:aSelector];
 }
 
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
-    
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
     return [super methodSignatureForSelector:aSelector] ?:
     [(id)self.ax_realDataSource methodSignatureForSelector:aSelector];
 }
 
-- (void)forwardInvocation:(NSInvocation *)anInvocation {
-    
+- (void)forwardInvocation:(NSInvocation *)anInvocation
+{
     id dataSource = self.ax_realDataSource;
-    if ([dataSource respondsToSelector:anInvocation.selector]) {
-        
+    if ([dataSource respondsToSelector:anInvocation.selector])
+    {   
         [anInvocation invokeWithTarget:dataSource];
     }
-    else [super forwardInvocation:anInvocation];
+    else
+    {
+        [super forwardInvocation:anInvocation];
+    }
 }
 
 @end
