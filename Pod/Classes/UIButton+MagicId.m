@@ -42,21 +42,7 @@
     
     if (!self.accessibilityIdentifier.length || [self.accessibilityIdentifier hasPrefix:@"AX_"]) {
         NSString *title = self.titleLabel.text;
-        title = [title stringByReplacingOccurrencesOfString:@" " withString:@"_"];
-        
-        if (!title || title.length == 0)
-        {
-            UIImage* image = [self.imageView image];
-            if (image)
-            {
-                title = [self.imageView image].accessibilityIdentifier;
-            }
-            else
-            {
-                title = @"";
-            }
-            
-        }
+        title = [title stringByReplacingOccurrencesOfString:@" " withString:@"_"] ? [title stringByReplacingOccurrencesOfString:@" " withString:@"_"] : @"";
         self.accessibilityIdentifier =
         [@"" stringByAppendingFormat:@"%@_BUTTON_%@",self.ax_prefix,title];
     }
