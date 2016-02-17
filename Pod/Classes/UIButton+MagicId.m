@@ -40,11 +40,26 @@
 - (void)ax_addAccId
 {
     
-    if (!self.accessibilityIdentifier.length || [self.accessibilityIdentifier hasPrefix:@"AX_"]) {
+    if (!self.accessibilityLabel.length || [self.accessibilityIdentifier hasPrefix:@"AX_"]) {
         NSString *title = self.titleLabel.text;
-        title = [title stringByReplacingOccurrencesOfString:@" " withString:@"_"] ? [title stringByReplacingOccurrencesOfString:@" " withString:@"_"] : @"";
-        self.accessibilityIdentifier =
-        [@"" stringByAppendingFormat:@"%@_BUTTON_%@",self.ax_prefix,title];
+        
+        if (!title)
+        {
+            title = NSStringFromCGPoint(self.center);
+        }
+        title = [title stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+        
+        if (!self.accessibilityIdentifier)
+        {
+            self.accessibilityIdentifier =
+            [@"" stringByAppendingFormat:@"%@_BUTTON_%@",self.ax_prefix,title];
+        }
+        
+        if (!self.accessibilityLabel)
+        {
+            self.accessibilityLabel =
+            [@"" stringByAppendingFormat:@"%@_BUTTON_%@",self.ax_prefix,title];
+        }
     }
 }
 
