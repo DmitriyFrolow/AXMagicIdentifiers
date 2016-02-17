@@ -45,7 +45,9 @@
         
         if (!title)
         {
-            title = NSStringFromCGPoint(self.center);
+            UIWindow* window = [UIApplication sharedApplication].keyWindow;
+            CGPoint point = [[self superview] convertPoint:self.frame.origin toView:window];
+            title = NSStringFromCGPoint(point);
         }
         title = [title stringByReplacingOccurrencesOfString:@" " withString:@"_"];
         
